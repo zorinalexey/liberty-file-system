@@ -35,7 +35,7 @@ final class Dir implements FileSystemInterface
         if ($this->has()) {
             return FileInfo::instance($this->path);
         }
-        if ( ! $this->has && mkdir($this->path, $this->permissions, $this->recursive)) {
+        if ( ! $this->has() && mkdir($this->path, $this->permissions, $this->recursive)) {
             return FileInfo::instance($this->path);
         }
         return false;
