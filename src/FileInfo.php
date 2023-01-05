@@ -31,9 +31,9 @@ final class FileInfo
 
     /**
      * Время последнего доступа к файлу в формате временной метки Unix
-     * @var int|false
+     * @var int
      */
-    public int|false $aTime = false;
+    public int $aTime = 0;
 
     /**
      * Базовое имя файла, каталога или ссылки без информации о пути.
@@ -43,9 +43,9 @@ final class FileInfo
 
     /**
      * Время последнего изменения индексного дескриптора файла в формате временной метки Unix
-     * @var int|false
+     * @var int
      */
-    public int|false $cTime = false;
+    public int $cTime = 0;
 
     /**
      * Расширение файла.
@@ -79,9 +79,9 @@ final class FileInfo
 
     /**
      * Время последнего изменения файла в формате временной метки Unix
-     * @var int|false
+     * @var int
      */
-    public int|false $mTime = false;
+    public int $mTime = 0;
 
     /**
      * Идентификатор владельца файла в виде числа в случае успешного выполнения или false
