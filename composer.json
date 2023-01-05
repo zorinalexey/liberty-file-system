@@ -1,0 +1,21 @@
+{
+    "name": "liberty/file-system",
+    "description": "Библиотека классов для работы с файловой системой",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Liberty\\FileSystem\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Алексей Зорин",
+            "email": "zorinalexey59292@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=8.0"
+    }
+}
