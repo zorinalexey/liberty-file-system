@@ -70,7 +70,7 @@ final class File implements FileSystemInterface
         if ($this->has() AND $dir->create() AND $this->delete()) {
             return $this->create();
         }
-        return false;
+        return $this->create();
     }
 
     /**
