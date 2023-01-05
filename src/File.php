@@ -59,6 +59,40 @@ final class File implements FileSystemInterface
     }
 
     /**
+     * Перезаписать файл
+     * @return FileInfo|false
+     */
+    public function rewrite(): FileInfo|false
+    {
+        $dir = new Dir(dirname($this->path));
+        $dir->recursive = true;
+        $dir->permissions = $this->permissions;
+        if ($this->has() AND $dir->create() AND $this->delete()) {
+            return $this->create();
+        }
+        return false;
+    }
+
+    /**
+     * Дописать данные в файл 
+     * @return FileInfo|false
+     */
+    public function append(): FileInfo|false
+    {
+        $dir = new Dir(dirname($this->path));
+        $dir->recursive = true;
+        $dir->permissions = $this->permissions;
+        if ($dir->create()) {
+            file_put_contents($this->path, $this->content, LOCK_EX | FILE_APPEND);
+            $this->chmod();
+            if ($this->has()) {
+                return new FileInfo($this->path);
+            }
+        }
+        return false;
+    }
+
+    /**
      * Удалить файл
      * @return bool Вернет true в случае успеха, в противном случае false
      */
