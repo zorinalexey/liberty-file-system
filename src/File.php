@@ -52,7 +52,7 @@ final class File implements FileSystemInterface
             file_put_contents($this->path, $this->content, LOCK_EX);
             $this->chmod();
             if ($this->has()) {
-                return new FileInfo($this->path);
+                return FileInfo::instance($this->path);
             }
         }
         return false;
@@ -86,7 +86,7 @@ final class File implements FileSystemInterface
             file_put_contents($this->path, $this->content, LOCK_EX | FILE_APPEND);
             $this->chmod();
             if ($this->has()) {
-                return new FileInfo($this->path);
+                return FileInfo::instance($this->path);
             }
         }
         return false;
