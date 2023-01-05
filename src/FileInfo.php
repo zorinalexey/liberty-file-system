@@ -178,14 +178,11 @@ final class FileInfo
     {
         $this->filePath = $filePath;
         $spl = new SplFileInfo($this->filePath);
-        $this->aTime = $spl->getATime();
         $this->baseName = $spl->getBasename((string)self::$suffix);
-        $this->cTime = $spl->getCTime();
         $this->extension = $spl->getExtension();
         $this->fileName = $spl->getFilename();
         $this->group = $spl->getGroup();
         $this->inode = $spl->getInode();
-        $this->mTime = $spl->getMTime();
         $this->owner = $spl->getOwner();
         $this->path = $spl->getPath();
         $this->pathName = $spl->getPathname();
@@ -199,6 +196,11 @@ final class FileInfo
         $this->isLink = $spl->isLink();
         $this->isReadable = $spl->isReadable();
         $this->isWritable = $spl->isWritable();
+        if ($this->isDir OR $this->isFile OR $this->isLink) {
+            $this->aTime = $spl->getATime();
+            $this->cTime = $spl->getCTime();
+            $this->mTime = $spl->getMTime();
+        }
         if ($this->isLink) {
             $this->linkTarget = $spl->getLinkTarget();
         }
