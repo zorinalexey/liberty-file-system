@@ -28,15 +28,23 @@ trait FileSystemTrait
     public int $permissions = 0777;
 
     /**
+     * Хранение объектов инстансов
+     * @var array
+     */
+    private static array $instance = [];
+
+    /**
      * Установить файл путь файла, дирректории или ссылки для дальнейшей работы
      * @param string $path
      * @return $this
      */
     public static function set(string $path): self
     {
-        $obj = new self();
-        $obj->path = $path;
-        return $obj;
+        if ( ! isset(self::$instance[$path])) {
+            self::$instance[$path] = new self();
+            self::$instance[$path]->path = $path;
+        }
+        return self::$instance[$path];
     }
 
     /**
