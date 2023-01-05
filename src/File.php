@@ -45,7 +45,7 @@ final class File implements FileSystemInterface
      */
     public function create(): FileInfo|false
     {
-        $dir = new Dir(dirname($this->path));
+        $dir = Dir::set(dirname($this->path));
         $dir->recursive = true;
         $dir->permissions = $this->permissions;
         if ( ! $this->has() AND $dir->create()) {
@@ -64,7 +64,7 @@ final class File implements FileSystemInterface
      */
     public function rewrite(): FileInfo|false
     {
-        $dir = new Dir(dirname($this->path));
+        $dir = Dir::set(dirname($this->path));
         $dir->recursive = true;
         $dir->permissions = $this->permissions;
         if ($this->has() AND $dir->create() AND $this->delete()) {
@@ -74,12 +74,12 @@ final class File implements FileSystemInterface
     }
 
     /**
-     * Дописать данные в файл 
+     * Дописать данные в файл
      * @return FileInfo|false
      */
     public function append(): FileInfo|false
     {
-        $dir = new Dir(dirname($this->path));
+        $dir = Dir::set(dirname($this->path));
         $dir->recursive = true;
         $dir->permissions = $this->permissions;
         if ($dir->create()) {
