@@ -6,7 +6,10 @@
     "autoload": {
         "psr-4": {
             "Liberty\\FileSystem\\": "src/"
-        }
+        },
+        "files":[
+            "src/defines.php"
+        ]
     },
     "authors": [
         {
