@@ -1,10 +1,8 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Liberty\FileSystem;
-
-use Liberty\FileSystem\FileInfo;
 
 /**
  * Интерфейс FileSystemInterface
@@ -84,7 +82,7 @@ interface FileSystemInterface
     /**
      * Переименвать файл, дирректорию или ссылку
      * @param string $newName Новое имя
-     * @param int $this->permissions Новые права на файл
+     * @param int $this- >permissions Новые права на файл
      * @return FileInfo|false Вернет объект FileInfo в случае успеха, в противном случае false
      */
     public function rename(string $newName): FileInfo|false;

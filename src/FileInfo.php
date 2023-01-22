@@ -1,10 +1,11 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Liberty\FileSystem;
 
 use SplFileInfo;
+use SplFileObject;
 
 /**
  * Класс FileInfo
@@ -18,16 +19,10 @@ final class FileInfo
 {
 
     /**
-     * Путь к файлу для получения информации
-     * @var string|null
-     */
-    private ?string $filePath = null;
-
-    /**
      * Суффикс, который будет исключён из базового имени.
      * @var string|null
      */
-    public static ?string $suffix = null;
+    public static string|null $suffix = null;
 
     /**
      * Время последнего доступа к файлу в формате временной метки Unix
@@ -39,7 +34,7 @@ final class FileInfo
      * Базовое имя файла, каталога или ссылки без информации о пути.
      * @var string|null
      */
-    public ?string $baseName = null;
+    public string|null $baseName = null;
 
     /**
      * Время последнего изменения индексного дескриптора файла в формате временной метки Unix
@@ -51,13 +46,13 @@ final class FileInfo
      * Расширение файла.
      * @var string|null
      */
-    public ?string $extension = null;
+    public string|null $extension = null;
 
     /**
      * Имя файла без информации о пути к нему.
      * @var string|null
      */
-    public ?string $fileName = null;
+    public string|null $fileName = null;
 
     /**
      * Группа файла. Идентификатор группы возвращается в числовом формате.
@@ -93,13 +88,13 @@ final class FileInfo
      * Путь к файлу, исключая имя файла и завершающий слеш.
      * @var string|null
      */
-    public ?string $path = null;
+    public string|null $path = null;
 
     /**
      * Путь к файлу.
      * @var string|null
      */
-    public ?string $pathName = null;
+    public string|null $pathName = null;
 
     /**
      * Список разрешений для файла в случае успешного выполнения или false
@@ -127,37 +122,37 @@ final class FileInfo
     public string|false $type = false;
 
     /**
-     * true, если каталог или false, в противном случае.
+     * True, если каталог или false, в противном случае.
      * @var bool
      */
     public bool $isDir = false;
 
     /**
-     * true, если файл является исполняемым или false, в противном случае.
+     * True, если файл является исполняемым или false, в противном случае.
      * @var bool
      */
     public bool $isExecutable = false;
 
     /**
-     * true, если файл существует и является обычным файлом (а не ссылкой), false в противном случае.
+     * True, если файл существует и является обычным файлом (а не ссылкой), false в противном случае.
      * @var bool
      */
     public bool $isFile = false;
 
     /**
-     * true, если файл является ссылкой или false, в противном случае.
+     * True, если файл является ссылкой или false, в противном случае.
      * @var bool
      */
     public bool $isLink = false;
 
     /**
-     * true, если файл доступен для чтения или false, в противном случае.
+     * True, если файл доступен для чтения или false, в противном случае.
      * @var bool
      */
     public bool $isReadable = false;
 
     /**
-     * true, если файл доступен для записи или false, в противном случае.
+     * True, если файл доступен для записи или false, в противном случае.
      * @var bool
      */
     public bool $isWritable = false;
@@ -170,12 +165,24 @@ final class FileInfo
 
     /**
      * Предоставление дополнительных методов для работы с файлом
-     * @var SplFileObject
+     * @var SplFileObject|null
      */
-    public $additionalFeatures;
+    public SplFileObject|null $additionalFeatures = null;
 
+    /**
+     * Путь к файлу для получения информации
+     * @var string|null
+     */
+    private string|null $filePath;
+
+    /** @noinspection UnusedConstructorDependenciesInspection
+     * @noinspection NotOptimalIfConditionsInspection
+     */
     private function __construct(string $filePath)
     {
+        set_exception_handler(function (Throwable $exception) {
+            new FileSystemException($exception->getMessage(), $exception->getCode);
+        });
         $this->filePath = $filePath;
         $spl = new SplFileInfo($this->filePath);
         $this->baseName = $spl->getBasename((string)self::$suffix);
@@ -196,7 +203,7 @@ final class FileInfo
         $this->isLink = $spl->isLink();
         $this->isReadable = $spl->isReadable();
         $this->isWritable = $spl->isWritable();
-        if ($this->isDir OR $this->isFile OR $this->isLink) {
+        if ($this->isDir or $this->isFile or $this->isLink) {
             $this->aTime = $spl->getATime();
             $this->cTime = $spl->getCTime();
             $this->mTime = $spl->getMTime();
@@ -204,20 +211,20 @@ final class FileInfo
         if ($this->isLink) {
             $this->linkTarget = $spl->getLinkTarget();
         }
-        if ( ! $this->isDir) {
+        if (!$this->isDir) {
             $this->content = file_get_contents($this->realPath);
             $this->additionalFeatures = $spl->openFile('r+');
         }
     }
 
-    public function __toString()
-    {
-        return (string)$this->content;
-    }
-
     public static function instance(string $filePath): self
     {
         return new self($filePath);
+    }
+
+    public function __toString(): string
+    {
+        return (string)$this->content;
     }
 
 }

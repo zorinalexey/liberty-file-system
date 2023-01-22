@@ -1,11 +1,8 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Liberty\FileSystem;
-
-use Liberty\FileSystem\FileSystemTrait;
-use Liberty\FileSystem\FileSystemInterface;
 
 /**
  * Класс Dir
@@ -21,42 +18,25 @@ final class Dir implements FileSystemInterface
     use FileSystemTrait;
 
     /**
-     * Рекурсивная работа с дирректорией
+     * Рекурсивная работа с директорией
      * @var bool
      */
     public bool $recursive = false;
 
     /**
-     * Создать дирректорию
+     * Создать директорию
      * @return  FileInfo|false Объект FileInfo в случае успеха, в противном случае false
      */
     public function create(): FileInfo|false
     {
-        if ($this->has()) {
-            return FileInfo::instance($this->path);
-        }
-        if ( ! $this->has() && mkdir($this->path, $this->permissions, $this->recursive)) {
+        if ($this->has() || mkdir($concurrentDirectory = $this->path, $this->permissions, $this->recursive) || is_dir($concurrentDirectory)) {
             return FileInfo::instance($this->path);
         }
         return false;
     }
 
     /**
-     * Удалить дирректорию
-     * @return bool
-     */
-    public function delete(): bool
-    {
-        if ($this->recursive) {
-            system("rm -r '" . $this->path . "'");
-        } else {
-            rmdir($this->path);
-        }
-        return ! $this->has();
-    }
-
-    /**
-     * Проверка существования дирректории
+     * Проверка существования директории
      * @return bool Вернет true если файл существует, в противном случае false
      */
     public function has(): bool
@@ -68,7 +48,21 @@ final class Dir implements FileSystemInterface
     }
 
     /**
-     * Переименовать дирректорию
+     * Удалить директорию
+     * @return bool
+     */
+    public function delete(): bool
+    {
+        if ($this->recursive) {
+            system("rm -r '" . $this->path . "'");
+        } else {
+            rmdir($this->path);
+        }
+        return !$this->has();
+    }
+
+    /**
+     * Переименовать директорию
      * @param string $newName Новое имя
      * @return FileInfo|false
      */

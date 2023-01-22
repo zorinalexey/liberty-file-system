@@ -1,12 +1,8 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Liberty\FileSystem;
-
-use Liberty\FileSystem\Dir;
-use Liberty\FileSystem\FileInfo;
-use Liberty\FileSystem\FileSystemInterface;
 
 /**
  * Класс File
@@ -25,7 +21,22 @@ final class File implements FileSystemInterface
      * Содержание файла
      * @var mixed
      */
-    public $content = null;
+    public mixed $content = null;
+
+    /**
+     * Перезаписать файл
+     * @return FileInfo|false
+     */
+    public function rewrite(): FileInfo|false
+    {
+        $dir = Dir::set(dirname($this->path));
+        $dir->recursive = true;
+        $dir->permissions = $this->permissions;
+        if ($this->has() && $this->delete()) {
+            return $this->create();
+        }
+        return false;
+    }
 
     /**
      * Проверка существования файла
@@ -40,6 +51,15 @@ final class File implements FileSystemInterface
     }
 
     /**
+     * Удалить файл
+     * @return bool Вернет true в случае успеха, в противном случае false
+     */
+    public function delete(): bool
+    {
+        return ($this->has() && unlink($this->path));
+    }
+
+    /**
      * Создать файл
      * @return  FileInfo|false Объект FileInfo в случае успеха, в противном случае false
      */
@@ -48,7 +68,7 @@ final class File implements FileSystemInterface
         $dir = Dir::set(dirname($this->path));
         $dir->recursive = true;
         $dir->permissions = $this->permissions;
-        if ( ! $this->has() AND $dir->create()) {
+        if (!$this->has() && $dir->create()) {
             file_put_contents($this->path, $this->content, LOCK_EX);
             $this->chmod();
             if ($this->has()) {
@@ -56,21 +76,6 @@ final class File implements FileSystemInterface
             }
         }
         return false;
-    }
-
-    /**
-     * Перезаписать файл
-     * @return FileInfo|false
-     */
-    public function rewrite(): FileInfo|false
-    {
-        $dir = Dir::set(dirname($this->path));
-        $dir->recursive = true;
-        $dir->permissions = $this->permissions;
-        if ($this->has() AND $dir->create() AND $this->delete()) {
-            return $this->create();
-        }
-        return $this->create();
     }
 
     /**
@@ -93,15 +98,15 @@ final class File implements FileSystemInterface
     }
 
     /**
-     * Удалить файл
-     * @return bool Вернет true в случае успеха, в противном случае false
+     * Переименовать файл
+     * @param string $newName Новое имя
+     * @return FileInfo|false Вернет объект FileInfo в случае успеха, в противном случае false
+     * @noinspection NotOptimalIfConditionsInspection
      */
-    public function delete(): bool
+    public function rename(string $newName): FileInfo|false
     {
-        if ($this->has()) {
-            if (unlink($this->path)) {
-                return true;
-            }
+        if ($newFile = $this->copy($newName) and $this->delete()) {
+            return $newFile;
         }
         return false;
     }
@@ -111,7 +116,6 @@ final class File implements FileSystemInterface
      * @param string $path Путь к целевому файлу. Если $path является URL,
      * то операция копирования может завершиться ошибкой, если обёртка URL
      * не поддерживает перезаписывание существующих файлов.
-     * @param int $this->permissions Новые права на файл
      * @return FileInfo|bool Вернет объект FileInfo в случае успеха, в противном случае false
      */
     public function copy(string $path): FileInfo|bool
@@ -122,20 +126,6 @@ final class File implements FileSystemInterface
         $create = $newFile->create();
         if ($create) {
             return FileInfo::instance($path);
-        }
-        return false;
-    }
-
-    /**
-     * Переименвать файл
-     * @param string $newName Новое имя
-     * @param int $this->permissions Новые права на файл
-     * @return FileInfo|false Вернет объект FileInfo в случае успеха, в противном случае false
-     */
-    public function rename(string $newName): FileInfo|false
-    {
-        if ($this->copy($newName, $this->permissions) AND $this->delete()) {
-            return true;
         }
         return false;
     }

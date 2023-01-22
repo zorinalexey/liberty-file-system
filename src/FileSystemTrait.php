@@ -1,6 +1,6 @@
-<?php
+<?php /** @noinspection ALL */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Liberty\FileSystem;
 
@@ -16,22 +16,20 @@ trait FileSystemTrait
 {
 
     /**
-     * Путь файла, дирректории или ссылки
-     * @var string|null
+     * Хранение объектов инстансов
+     * @var array
      */
-    private ?string $path = null;
-
+    private static array $instance = [];
     /**
      * Права доступа к файлу, дирректории или ссылки
      * @var int
      */
     public int $permissions = 0777;
-
     /**
-     * Хранение объектов инстансов
-     * @var array
+     * Путь файла, дирректории или ссылки
+     * @var string|null
      */
-    private static array $instance = [];
+    private ?string $path = null;
 
     /**
      * Установить файл путь файла, дирректории или ссылки для дальнейшей работы
@@ -40,7 +38,7 @@ trait FileSystemTrait
      */
     public static function set(string $path): self
     {
-        if ( ! isset(self::$instance[$path])) {
+        if (!isset(self::$instance[$path])) {
             self::$instance[$path] = new self();
             self::$instance[$path]->path = $path;
         }
